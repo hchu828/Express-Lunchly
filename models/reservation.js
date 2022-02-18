@@ -36,23 +36,26 @@ class Reservation {
            WHERE customer_id = $1`,
             [customerId],
         );
-
         return results.rows.map(row => new Reservation(row));
     }
 
-    static async getCustomerIds(){
+    /** Gets list of 10 customer ids from db, 
+     * sorted by # of reservations 
+     * */
+
+    static async getTopTenCustomersByReservation() {
         const results = await db.query(
-            `SELECT customer_id AS customerId
+            `SELECT customer_id AS "customerId"
                 FROM reservations
                 GROUP BY customer_id
                 ORDER BY COUNT(customer_id) DESC
                 LIMIT 10`
         );
-        console.log("RESULTS", results);
-        return results.rows;
-        
+
+        return results.rows.map(row => row["customerId"]);
     }
 
+    /** Save this reservation  */
 
     async save() {
         if (this.id === undefined) {
@@ -81,8 +84,5 @@ class Reservation {
         }
     }
 }
-
-
-
 
 module.exports = Reservation;

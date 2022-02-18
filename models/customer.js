@@ -58,7 +58,7 @@ class Customer {
 
     /** get a customer by {firstName, lastName} */
 
-    static async get(firstName, lastName) {
+    static async getByName(firstName, lastName) {
         const results = await db.query(
             `SELECT id,
             first_name AS "firstName",
@@ -116,7 +116,9 @@ class Customer {
         }
     }
 
-    fullName() {
+    /** Returns full name of customer as string */
+
+    getFullName() {
         return this.firstName + " " + this.lastName;
     }
 }

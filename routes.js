@@ -10,7 +10,21 @@ const bodyParser = require("body-parser");
 
 const router = new express.Router();
 
-router.use(bodyParser.urlencoded({ extended: true }));
+/** Top-ten: show list of top ten customers with most reservations */
+
+router.get("/top-ten/", async function (req, res, next) {
+
+    const customerIds = await Reservation.getTopTenCustomersByReservation();
+
+    const customers = [];
+
+    for (const id of customerIds) {
+        const customer = await Customer.get(id);
+        customers.push(customer);
+    }
+
+    res.render("customer_list.html", { customers });
+});
 
 /** Homepage: show list of customers. */
 
@@ -43,19 +57,10 @@ router.get("/:id/", async function (req, res, next) {
 
     const reservations = await customer.getReservations();
 
-    return res.render("customer_detail.html", { customer, reservations });
+    res.render("customer_detail.html", { customer, reservations });
 });
 
-router.get("/top-ten/", async function(req, res, next){
-    console.log("TOP TEN ************");
-    const customerIds = await Reservation.getCustomerIds();
-    console.log("CUSTOMER IDS", customerIds);
-    const customers = await customerIds.map(id => Customer.get(id));
-    console.log("CUSTOMER ", customers);
-    res.render("customer_list.html", customers=customers);
-
-
-});
+/** Show a customer, given their full name. */
 
 router.get("/search/:search", async function (req, res, next) {
 
@@ -64,12 +69,12 @@ router.get("/search/:search", async function (req, res, next) {
     const fullName = searchValue.split(' ');
     let firstName = fullName[0];
     let lastName = fullName[1];
-  
+
     firstName = convertStringToName(firstName);
     lastName = convertStringToName(lastName);
-    const customer = await Customer.get(firstName, lastName);
+    const customer = await Customer.getByName(firstName, lastName);
 
-    res.render("customer_edit_form.html", { customer });
+    res.render("customer_detail.html", { customer });
 
 })
 
@@ -113,6 +118,8 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
 
     return res.redirect(`/${customerId}/`);
 });
+
+
 
 
 
