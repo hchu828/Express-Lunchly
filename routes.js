@@ -46,13 +46,14 @@ router.get("/:id/", async function (req, res, next) {
     return res.render("customer_detail.html", { customer, reservations });
 });
 
-router.get("/search", async function (req, res, next) {
-    console.log(`searchName: ${req.body}`);
-    const searchValue = req.fields;
+router.get("/search/:search", async function (req, res, next) {
+
+    const searchValue = req.query.search;
 
     const fullName = searchValue.split(' ');
-    const firstName = fullName[0];
-    const lastName = fullName[1];
+    let firstName = fullName[0];
+    let lastName = fullName[1];
+  
     firstName = convertStringToName(firstName);
     lastName = convertStringToName(lastName);
     const customer = await Customer.get(firstName, lastName);
@@ -105,12 +106,13 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
  * remaining letters lowercase
  */
 function convertStringToName(string) {
-    const firstLetter = firstName.at(0).toUpperCase();
+    const firstLetter = string[0].toUpperCase();
     let remainingLetters = "";
 
     for (let i = 1; i < string.length; i++) {
-        remainingLetters = remainingLetters + string.at(i).toLowerCase();
+        remainingLetters = remainingLetters + string[i].toLowerCase();
     }
+    console.log(`NAME ****** : ${firstLetter + remainingLetters}`);
     return firstLetter + remainingLetters;
 }
 module.exports = router;
