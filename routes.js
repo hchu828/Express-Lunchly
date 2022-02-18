@@ -46,6 +46,17 @@ router.get("/:id/", async function (req, res, next) {
     return res.render("customer_detail.html", { customer, reservations });
 });
 
+router.get("/top-ten/", async function(req, res, next){
+    console.log("TOP TEN ************");
+    const customerIds = await Reservation.getCustomerIds();
+    console.log("CUSTOMER IDS", customerIds);
+    const customers = await customerIds.map(id => Customer.get(id));
+    console.log("CUSTOMER ", customers);
+    res.render("customer_list.html", customers=customers);
+
+
+});
+
 router.get("/search/:search", async function (req, res, next) {
 
     const searchValue = req.query.search;
@@ -86,6 +97,7 @@ router.post("/:id/edit/", async function (req, res, next) {
 /** Handle adding a new reservation. */
 
 router.post("/:id/add-reservation/", async function (req, res, next) {
+
     const customerId = req.params.id;
     const startAt = new Date(req.body.startAt);
     const numGuests = req.body.numGuests;
@@ -101,6 +113,8 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
 
     return res.redirect(`/${customerId}/`);
 });
+
+
 
 /** Converts string to name with first-letter uppercase,
  * remaining letters lowercase
