@@ -14,16 +14,11 @@ const router = new express.Router();
 
 router.get("/top-ten/", async function (req, res, next) {
 
-    // CODE REVIEW: could get all customer data from gettoptencustbyreservations()
-    // Better to use join 
-    const customerIds = await Reservation.getTopTenCustomersByReservation();
+    const customersData =
+        await Reservation.getTopTenCustomersByReservation();
 
-    const customers = [];
-    // Use map: promise.all
-    for (const id of customerIds) {
-        const customer = await Customer.get(id);
-        customers.push(customer);
-    }
+    const customers =
+        customersData.map(customer => new Customer(customer));
 
     res.render("customer_list.html", { customers });
 });
@@ -78,7 +73,7 @@ router.get("/search/:search", async function (req, res, next) {
 
     res.render("customer_detail.html", { customer });
 
-})
+});
 
 /** Show form to edit a customer. */
 

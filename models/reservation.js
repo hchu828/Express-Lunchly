@@ -46,8 +46,8 @@ class Reservation {
     static async getTopTenCustomersByReservation() {
         const results = await db.query(
             `SELECT customers.id,
-                    customers.first_name AS firstName,
-                    customers.last_name AS lastName,
+                    customers.first_name AS "firstName",
+                    customers.last_name AS "lastName",
                     customers.phone,
                     customers.notes
                 FROM reservations
@@ -55,10 +55,10 @@ class Reservation {
                 GROUP BY customers.id
                 ORDER BY COUNT(customers.id) DESC
                 LIMIT 10`
-                
         );
+        return results.rows;
 
-        return results.rows.map(row => row["customerId"]);
+        // return results.rows.map(row => row["customerId"]);
     }
 
     /** Save this reservation  */
