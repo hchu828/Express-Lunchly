@@ -67,6 +67,7 @@ class Customer {
             notes
      FROM customers
      WHERE first_name = $1 AND  last_name = $2`,
+    //  Use OR
             [firstName, lastName]
         );
         const customer = results.rows[0];

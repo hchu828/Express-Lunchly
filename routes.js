@@ -14,10 +14,12 @@ const router = new express.Router();
 
 router.get("/top-ten/", async function (req, res, next) {
 
+    // CODE REVIEW: could get all customer data from gettoptencustbyreservations()
+    // Better to use join 
     const customerIds = await Reservation.getTopTenCustomersByReservation();
 
     const customers = [];
-
+    // Use map: promise.all
     for (const id of customerIds) {
         const customer = await Customer.get(id);
         customers.push(customer);
@@ -63,13 +65,13 @@ router.get("/:id/", async function (req, res, next) {
 /** Show a customer, given their full name. */
 
 router.get("/search/:search", async function (req, res, next) {
-
+    // REVIEW: ORDER matters above get /id, use req.params
     const searchValue = req.query.search;
 
     const fullName = searchValue.split(' ');
     let firstName = fullName[0];
     let lastName = fullName[1];
-
+    // REVIEW: make sql query using like or ilike 
     firstName = convertStringToName(firstName);
     lastName = convertStringToName(lastName);
     const customer = await Customer.getByName(firstName, lastName);
@@ -127,6 +129,7 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
  * remaining letters lowercase
  */
 function convertStringToName(string) {
+    // REVIEW: use slice, add error handling, test more cases 
     const firstLetter = string[0].toUpperCase();
     let remainingLetters = "";
 
